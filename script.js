@@ -3,7 +3,7 @@ function updateProgressBar() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
     const scrollPercentage = (scrollTop / scrollHeight) * 100;
-    
+
     const progressBar = document.getElementById('progressBar');
     progressBar.style.width = scrollPercentage + '%';
 }
@@ -28,19 +28,25 @@ document.addEventListener('DOMContentLoaded', () => {
     sections.forEach(section => {
         observer.observe(section);
     });
-    
+
+    // Observe section transition images
+    const sectionImages = document.querySelectorAll('.section-image');
+    sectionImages.forEach(img => {
+        observer.observe(img);
+    });
+
     // Add scroll event listener for progress bar
     window.addEventListener('scroll', updateProgressBar);
-    
+
     // Initial progress bar update
     updateProgressBar();
-    
+
     // Animate hero section on load
     animateHero();
-    
+
     // Add particle effect
     createParticles();
-    
+
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -60,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function animateHero() {
     const hero = document.querySelector('.hero');
     hero.style.opacity = '0';
-    
+
     setTimeout(() => {
         hero.style.transition = 'opacity 1s ease';
         hero.style.opacity = '1';
@@ -71,32 +77,32 @@ function animateHero() {
 function createParticles() {
     const particleCount = 50;
     const animatedBg = document.querySelector('.animated-bg');
-    
+
     for (let i = 0; i < particleCount; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
-        
+
         // Random position
         particle.style.left = Math.random() * 100 + '%';
         particle.style.top = Math.random() * 100 + '%';
-        
+
         // Random size
         const size = Math.random() * 4 + 1;
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
-        
+
         // Random color
         const colors = ['#a855f7', '#ec4899', '#3b82f6', '#06b6d4', '#10b981', '#f97316'];
         particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-        
+
         // Random animation duration
         const duration = Math.random() * 20 + 10;
         particle.style.animationDuration = duration + 's';
-        
+
         // Random delay
         const delay = Math.random() * 5;
         particle.style.animationDelay = delay + 's';
-        
+
         animatedBg.appendChild(particle);
     }
 }
@@ -138,7 +144,7 @@ const konamiSequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLe
 document.addEventListener('keydown', (e) => {
     konamiCode.push(e.key);
     konamiCode = konamiCode.slice(-10);
-    
+
     if (konamiCode.join(',') === konamiSequence.join(',')) {
         activateEasterEgg();
     }
@@ -148,7 +154,7 @@ function activateEasterEgg() {
     // Create explosion effect
     const body = document.body;
     body.style.animation = 'shake 0.5s';
-    
+
     // Add shake animation
     const shakeStyle = document.createElement('style');
     shakeStyle.textContent = `
@@ -166,7 +172,7 @@ function activateEasterEgg() {
         }
     `;
     document.head.appendChild(shakeStyle);
-    
+
     // Show message
     const message = document.createElement('div');
     message.textContent = '💥 HAI FATTO ESPLODERE TUTTO! 💥';
@@ -187,7 +193,7 @@ function activateEasterEgg() {
         border-radius: 20px;
     `;
     body.appendChild(message);
-    
+
     setTimeout(() => {
         message.remove();
         body.style.animation = '';
@@ -200,29 +206,29 @@ class SoundEffects {
         this.audioContext = null;
         this.enabled = false;
     }
-    
+
     init() {
         if (!this.audioContext) {
             this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
             this.enabled = true;
         }
     }
-    
+
     playBeep(frequency = 440, duration = 100) {
         if (!this.enabled) return;
-        
+
         const oscillator = this.audioContext.createOscillator();
         const gainNode = this.audioContext.createGain();
-        
+
         oscillator.connect(gainNode);
         gainNode.connect(this.audioContext.destination);
-        
+
         oscillator.frequency.value = frequency;
         oscillator.type = 'square';
-        
+
         gainNode.gain.setValueAtTime(0.1, this.audioContext.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.01, this.audioContext.currentTime + duration / 1000);
-        
+
         oscillator.start(this.audioContext.currentTime);
         oscillator.stop(this.audioContext.currentTime + duration / 1000);
     }
@@ -238,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
             soundFX.init();
         }
     }, { once: true });
-    
+
     // Add hover sounds to cards
     const cards = document.querySelectorAll('.glass-card');
     cards.forEach(card => {
@@ -246,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
             soundFX.playBeep(800, 50);
         });
     });
-    
+
     // Add click sounds to kbd elements
     const kbdElements = document.querySelectorAll('kbd');
     kbdElements.forEach(kbd => {
@@ -260,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('scroll', () => {
     const scrolled = window.pageYOffset;
     const hero = document.querySelector('.hero');
-    
+
     if (hero && scrolled < window.innerHeight) {
         hero.style.transform = `translateY(${scrolled * 0.5}px)`;
         hero.style.opacity = 1 - (scrolled / window.innerHeight);
@@ -271,7 +277,7 @@ window.addEventListener('scroll', () => {
 function typeWriter(element, text, speed = 50) {
     let i = 0;
     element.textContent = '';
-    
+
     function type() {
         if (i < text.length) {
             element.textContent += text.charAt(i);
@@ -279,7 +285,7 @@ function typeWriter(element, text, speed = 50) {
             setTimeout(type, speed);
         }
     }
-    
+
     type();
 }
 
@@ -289,13 +295,13 @@ const consoleObserver = new IntersectionObserver((entries) => {
         if (entry.isIntersecting) {
             const matrixTexts = entry.target.querySelectorAll('.matrix-text span');
             const texts = ['Loading...', 'Initializing system...', "Don't panic..."];
-            
+
             matrixTexts.forEach((span, index) => {
                 setTimeout(() => {
                     typeWriter(span, texts[index], 100);
                 }, index * 1000);
             });
-            
+
             consoleObserver.unobserve(entry.target);
         }
     });
@@ -311,12 +317,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Add glow effect on mouse move
 document.addEventListener('mousemove', (e) => {
     const cards = document.querySelectorAll('.glass-card');
-    
+
     cards.forEach(card => {
         const rect = card.getBoundingClientRect();
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
-        
+
         if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
             card.style.setProperty('--mouse-x', x + 'px');
             card.style.setProperty('--mouse-y', y + 'px');
